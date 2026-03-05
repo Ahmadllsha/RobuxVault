@@ -55,7 +55,7 @@ const GAMES = [
     id: "robux", 
     name: "Robux", 
     description: "",
-    icon: "/robux.png"
+    icon: "/robux/robux.png"
   },
   { 
     id: "steal-brainrot", 
