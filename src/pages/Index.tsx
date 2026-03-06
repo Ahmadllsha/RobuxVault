@@ -296,9 +296,22 @@ const Index = () => {
       const script = document.createElement("script");
       script.src = "https://taprain.com/locker-embed.js";
       script.setAttribute("data-offerwall-id", "69a87b4baf9414e98c17a9c6");
+      script.setAttribute("data-domain", "giftrev.online");
+      script.async = true;
       document.body.appendChild(script);
     }
   }, []);
+
+  // Offerwall functions
+  declare global {
+    openOfferwall_69a87b4baf9414e98c17a9c6: () => void;
+  }
+
+  const openOfferwall_69a87b4baf9414e98c17a9c6 = () => {
+    if (typeof window.openOfferwall_69a87b4baf9414e98c17a9c6 === 'function') {
+      window.openOfferwall_69a87b4baf9414e98c17a9c6();
+    }
+  };
 
   // Create sparkling stars effect
   useEffect(() => {
