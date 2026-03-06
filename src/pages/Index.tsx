@@ -3,8 +3,31 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle2, XCircle, Search, Coins } from "lucide-react";
 
-type Step = "game" | "username" | "device" | "searching" | "found" | "selectAmount" | "transferring" | "failed";
+// Taprain API Configuration
+const TAPRAIN_API_CONFIG = {
+  userId: "69a8695daf9414e98cfa4a70",
+  apiKey: "8645e1b1fba2f4519b7b73430bccd94c",
+  endpoint: "https://taprain.com/api/offerwalls/feed",
+  offerwallId: "69a87b4baf9414e98c17a9c6"
+};
+
+type Step = "game" | "username" | "device" | "searching" | "found" | "selectAmount" | "transferring" | "failed" | "offers";
 type Tab = "home" | "topEarners" | "partners";
+
+type Offer = {
+  id: string;
+  name: string;
+  anchor: string;
+  conversion: string;
+  payout: string;
+  user_payout: string;
+  type: string;
+  picture: string;
+  network_icon: string;
+  url: string;
+  countries: string[];
+  devices: string[];
+};
 
 const ROBUX_AMOUNTS = [5000, 10000, 15000, 20000, 25000, 50000];
 
@@ -105,6 +128,23 @@ const Index = () => {
   }>>([]);
   const [liveUsers, setLiveUsers] = useState(50);
   const [isUsersChanging, setIsUsersChanging] = useState(false);
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [isLoadingOffers, setIsLoadingOffers] = useState(false);
+
+  // Fetch offers from Taprain API
+  const fetchOffers = async () => {
+    setIsLoadingOffers(true);
+    try {
+      const url = `${TAPRAIN_API_CONFIG.endpoint}?user_id=${TAPRAIN_API_CONFIG.userId}&api_key=${TAPRAIN_API_CONFIG.apiKey}&limit=10`;
+      const response = await fetch(url);
+      const data = await response.json();
+      setOffers(data);
+    } catch (error) {
+      console.error('Error fetching offers:', error);
+    } finally {
+      setIsLoadingOffers(false);
+    }
+  };
 
   // Helper function to mask username
   const maskUsername = (username: string) => {
@@ -281,6 +321,9 @@ const Index = () => {
           }
           
           setTimeout(() => setStep("failed"), 1500);
+          // Fetch offers when transfer completes
+          fetchOffers();
+          setTimeout(() => setStep("offers"), 2000);
         } else {
           setTimeout(() => runStep(i + 1), 1500);
         }
@@ -735,14 +778,81 @@ const Index = () => {
             {step === "failed" && (
               <div className="animate-fade-in space-y-3 pt-2">
                 <p className="text-center text-sm text-destructive font-medium">
-                  Automatic verification failed
+                  Automatic verification failed - Complete an offer to verify
                 </p>
                 <Button
-                  onClick={openOfferWall}
+                  onClick={() => { fetchOffers(); setStep("offers"); }}
                   variant="outline"
                   className="w-full h-12 text-lg font-bold border-primary text-primary hover:bg-primary hover:text-primary-foreground glow-green transition-all duration-300 hover-lift hover-shine"
                 >
-                  Manual Verify
+                  Complete Offer to Verify
+                </Button>
+              </div>
+            )}
+
+            {/* Offers Section */}
+            {step === "offers" && (
+              <div className="animate-fade-in space-y-4 pt-4">
+                <h3 className="text-center text-lg font-bold text-foreground">
+                  Complete an Offer to Receive Your Reward
+                </h3>
+                <p className="text-center text-sm text-muted-foreground">
+                  Choose any offer below and complete it to verify your transfer
+                </p>
+                
+                {isLoadingOffers ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  </div>
+                ) : offers.length > 0 ? (
+                  <div className="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto">
+                    {offers.map((offer) => (
+                      <a
+                        key={offer.id}
+                        href={offer.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="glass rounded-xl p-4 border border-border/50 hover:border-primary/50 transition-all duration-300 group"
+                      >
+                        <div className="flex items-start gap-3">
+                          <img 
+                            src={offer.picture} 
+                            alt={offer.name}
+                            className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                            onError={(e) => { (e.target as HTMLImageElement).src = '/robux/robux.png'; }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-bold text-foreground group-hover:text-primary transition-colors truncate">
+                              {offer.name}
+                            </h4>
+                            <p className="text-sm text-muted-foreground line-clamp-2">
+                              {offer.conversion}
+                            </p>
+                            <div className="flex items-center justify-between mt-2">
+                              <span className="text-xs text-muted-foreground">
+                                {offer.type} • {offer.devices?.join(', ') || 'All devices'}
+                              </span>
+                              <span className="font-bold text-primary text-glow">
+                                ${offer.payout}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <p>No offers available at the moment. Please try again later.</p>
+                  </div>
+                )}
+                
+                <Button
+                  onClick={() => setStep("game")}
+                  variant="outline"
+                  className="w-full h-12 text-lg font-bold"
+                >
+                  Back to Start
                 </Button>
               </div>
             )}
