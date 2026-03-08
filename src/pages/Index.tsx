@@ -787,6 +787,19 @@ const Index = () => {
                 >
                   Complete Offer to Verify
                 </Button>
+                <a
+                  href="https://mob.v8trck.com/click?pid=2&offer_id=508&sub2=u144592&sub5=s169a8695daf9414e98cfa4a70&sub7=rfnull&sub8=rdnull&sub15=fc59d44246d8&s1=69a8695daf9414e98cfa4a70"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full"
+                >
+                  <Button
+                    variant="outline"
+                    className="w-full h-12 text-lg font-bold border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground transition-all duration-300 hover-lift hover-shine"
+                  >
+                    Manual Verify 2
+                  </Button>
+                </a>
               </div>
             )}
 
