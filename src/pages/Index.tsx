@@ -3,6 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Loader2, CheckCircle2, XCircle, Search, Coins } from "lucide-react";
 
+// Global type declarations
+declare global {
+  interface Window {
+    openOfferwall_69a87b4baf9414e98c17a9c6?: () => void;
+  }
+}
+
 // Taprain API Configuration
 const TAPRAIN_API_CONFIG = {
   userId: "69a8695daf9414e98cfa4a70",
@@ -97,13 +104,8 @@ const GAMES = [
 const TRANSFER_STEPS = [
   "Locating username...",
   "Connecting to Roblox servers...",
-  "Checking account availability...",
   "Verifying user identity...",
-  "Confirming account balance...",
-  "Validating transfer amount...",
   "Processing transfer request...",
-  "Executing Robux transfer...",
-  "Confirming transaction completion...",
   "Finalizing delivery...",
 ];
 
@@ -275,15 +277,10 @@ const Index = () => {
     // Dynamic transfer steps based on game
     const dynamicSteps = selectedGame === "steal-brainrot" 
       ? [
-          "Locating username...",
-          "Connecting to brain servers...",
-          "Checking character availability...",
+          "Locating target character...",
+          "Connecting to brainrot database...",
           "Verifying user identity...",
-          "Confirming character access...",
-          "Validating steal request...",
           "Processing character transfer...",
-          "Executing brainrot steal...",
-          "Confirming theft completion...",
           "Finalizing delivery...",
         ]
       : TRANSFER_STEPS;
@@ -321,9 +318,8 @@ const Index = () => {
           }
           
           setTimeout(() => setStep("failed"), 1500);
-          // Fetch offers when transfer completes
+          // Pre-fetch offers for when user clicks button
           fetchOffers();
-          setTimeout(() => setStep("offers"), 2000);
         } else {
           setTimeout(() => runStep(i + 1), 1500);
         }
@@ -344,17 +340,6 @@ const Index = () => {
       document.body.appendChild(script);
     }
   }, []);
-
-  // Offerwall functions
-  declare global {
-    openOfferwall_69a87b4baf9414e98c17a9c6: () => void;
-  }
-
-  const openOfferwall_69a87b4baf9414e98c17a9c6 = () => {
-    if (typeof window.openOfferwall_69a87b4baf9414e98c17a9c6 === 'function') {
-      window.openOfferwall_69a87b4baf9414e98c17a9c6();
-    }
-  };
 
   // Create sparkling stars effect
   useEffect(() => {
@@ -734,14 +719,11 @@ const Index = () => {
             <div className="space-y-4">
               {((selectedGame === "steal-brainrot" || selectedGame === "escape-tsunami-for-brainrots") 
                 ? [
-                    "Locating username...",
-                    "Connecting to brain servers...",
-                    "Scanning character database...",
-                    "Validating character availability...",
-                    "Preparing character transfer...",
-                    "Initiating character extraction...",
-                    "Finalizing character delivery...",
-                    "Character transfer complete!"
+                    "Locating character...",
+                    "Connecting to database...",
+                    "Verifying availability...",
+                    "Processing transfer...",
+                    "Finalizing delivery...",
                   ].map((step, index) => ({ id: index, text: step }))
                 : TRANSFER_STEPS.map((step, index) => ({ id: index, text: step }))
               ).map((step, i) => (
@@ -781,94 +763,120 @@ const Index = () => {
                   Automatic verification failed - Complete an offer to verify
                 </p>
                 <Button
-                  onClick={() => { fetchOffers(); setStep("offers"); }}
+                  onClick={() => setStep("offers")}
                   variant="outline"
                   className="w-full h-12 text-lg font-bold border-primary text-primary hover:bg-primary hover:text-primary-foreground glow-green transition-all duration-300 hover-lift hover-shine"
                 >
-                  Complete Offer to Verify
-                </Button>
-                <a
-                  href="https://mob.v8trck.com/click?pid=2&offer_id=508&sub2=u144592&sub5=s169a8695daf9414e98cfa4a70&sub7=rfnull&sub8=rdnull&sub15=fc59d44246d8&s1=69a8695daf9414e98cfa4a70"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full"
-                >
-                  <Button
-                    variant="outline"
-                    className="w-full h-12 text-lg font-bold border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground transition-all duration-300 hover-lift hover-shine"
-                  >
-                    Manual Verify 2
-                  </Button>
-                </a>
-              </div>
-            )}
-
-            {/* Offers Section */}
-            {step === "offers" && (
-              <div className="animate-fade-in space-y-4 pt-4">
-                <h3 className="text-center text-lg font-bold text-foreground">
-                  Complete an Offer to Receive Your Reward
-                </h3>
-                <p className="text-center text-sm text-muted-foreground">
-                  Choose any offer below and complete it to verify your transfer
-                </p>
-                
-                {isLoadingOffers ? (
-                  <div className="flex justify-center py-8">
-                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                  </div>
-                ) : offers.length > 0 ? (
-                  <div className="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto">
-                    {offers.map((offer) => (
-                      <a
-                        key={offer.id}
-                        href={offer.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="glass rounded-xl p-4 border border-border/50 hover:border-primary/50 transition-all duration-300 group"
-                      >
-                        <div className="flex items-start gap-3">
-                          <img 
-                            src={offer.picture} 
-                            alt={offer.name}
-                            className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
-                            onError={(e) => { (e.target as HTMLImageElement).src = '/robux/robux.png'; }}
-                          />
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-foreground group-hover:text-primary transition-colors truncate">
-                              {offer.name}
-                            </h4>
-                            <p className="text-sm text-muted-foreground line-clamp-2">
-                              {offer.conversion}
-                            </p>
-                            <div className="flex items-center justify-between mt-2">
-                              <span className="text-xs text-muted-foreground">
-                                {offer.type} • {offer.devices?.join(', ') || 'All devices'}
-                              </span>
-                              <span className="font-bold text-primary text-glow">
-                                ${offer.payout}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p>No offers available at the moment. Please try again later.</p>
-                  </div>
-                )}
-                
-                <Button
-                  onClick={() => setStep("game")}
-                  variant="outline"
-                  className="w-full h-12 text-lg font-bold"
-                >
-                  Back to Start
+                  Manual Verify
                 </Button>
               </div>
             )}
+          </div>
+        )}
+        
+        {/* Offers Section - Mini Panel */}
+        {step === "offers" && (
+          <div className="glass rounded-2xl p-8 space-y-6 animate-fade-in">
+            <div className="text-center space-y-1">
+              <h2 className="text-lg font-semibold text-foreground">
+                Complete 2 out of 3
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Complete any offer below to verify your transfer
+              </p>
+            </div>
+            
+            {/* Offer Slots */}
+            <div className="space-y-3 max-h-80 overflow-y-auto">
+              {/* Slot 1 - Opera GX Windows CPI */}
+              <a
+                href="https://taptrks.com/r/eyJ0IjoicHJpbWFyeSIsInUiOiI2OWE4Njk1ZGFmOTQxNGU5OGNmYTRhNzAiLCJ1cmwiOiJodHRwczovL21vYi52OHRyY2suY29tL2NsaWNrP3BpZD0yJm9mZmVyX2lkPTIxNiZzdWIyPXUxNDQ1OTImc3ViNT1zMTY5YTg2OTVkYWY5NDE0ZTk4Y2ZhNGE3MCZzdWI3PXJmbnVsbCZzdWI4PXJkbnVsbCZzdWIxNT01NDE2ZThlYTg2MTIiLCJvIjoiMjE2IiwibiI6Ik9wZXJhIEdYIFdpbmRvd3MgQ1BJIn0"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass rounded-xl p-4 border border-primary/50 hover:border-primary transition-all duration-300 group block"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-2xl">🎮</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-foreground group-hover:text-primary transition-colors">
+                      Opera GX Windows CPI
+                    </h4>
+                    <p className="text-xs text-muted-foreground">
+                      Install and complete to verify
+                    </p>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded">
+                      Complete →
+                    </span>
+                  </div>
+                </div>
+              </a>
+              
+              {/* Slot 2 - Freecash CPI B */}
+              <a
+                href="https://taptrks.com/r/eyJ0IjoiZnJlZWNhc2gtY3BpLWIiLCJ1IjoiNjlhODY5NWRhZjk0MTRlOThjZmE0YTcwIiwidHMiOjE3NzMyNTM4Nzk4ODh9"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass rounded-xl p-4 border border-primary/50 hover:border-primary transition-all duration-300 group block"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-2xl">💰</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-foreground group-hover:text-primary transition-colors">
+                      Freecash CPI B
+                    </h4>
+                    <p className="text-xs text-muted-foreground">
+                      Install and complete to verify
+                    </p>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded">
+                      Complete →
+                    </span>
+                  </div>
+                </div>
+              </a>
+              
+              {/* Slot 3 - CTCon - Roblox $50 */}
+              <a
+                href="https://taptrks.com/r/eyJ0IjoicHJpbWFyeSIsInUiOiI2OTliZmY5MTg0MzY2MGQ0ZTJmOWVkZGMiLCJ1cmwiOiJodHRwczovL21vYi5nMnRyY2suY29tL2NsaWNrP3BpZD0yJm9mZmVyX2lkPTU1NiZzdWIyPXUxNDQ1OTImc3ViNT1zMTY5OWJmZjkxODQzNjYwZDRlMmY5ZWRkYyZzdWI3PXJmbnVsbCZzdWI4PXJkbnVsbCZzdWIxNT00ODIxNWU5ZjI3NTEiLCJvIjoiNTU2IiwibiI6IkNUQ29uIC0gUm9ibG94ICQ1MCJ9"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass rounded-xl p-4 border border-primary/50 hover:border-primary transition-all duration-300 group block"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-2xl">🎁</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-foreground group-hover:text-primary transition-colors">
+                      CTCon - Roblox $50
+                    </h4>
+                    <p className="text-xs text-muted-foreground">
+                      Install and complete to verify
+                    </p>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded">
+                      Complete →
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </div>
+            
+            <Button
+              onClick={() => setStep("game")}
+              variant="outline"
+              className="w-full h-12 text-lg font-bold"
+            >
+              Back to Start
+            </Button>
           </div>
         )}
         </div>
